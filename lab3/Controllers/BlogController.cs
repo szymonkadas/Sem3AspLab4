@@ -23,7 +23,7 @@ namespace lab3.Controllers
 
         public async Task<IActionResult> Article(string id)
         {
-            var post = await _context.Articles.FirstOrDefaultAsync(p => p.Id == id);
+            var post = await _context.Articles.Include(p => p.Comments).FirstOrDefaultAsync(p => p.Id == id);
             if (post == null) return NotFound();
             var viewModel = post.ToViewModel();
             return View(viewModel);
@@ -54,6 +54,19 @@ namespace lab3.Controllers
             _context.Articles.Add(entity);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Article), new { id = entity.Id });
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddComment(CreateBlogCommentModel model){
+            var article = await _context.Articles.FirstOrDefaultAsync(a => a.Id == model.ArticleId);
+            if(article == null){
+                return NotFound();
+            }
+
+            var entity = model.ToEntity();
+            _context.Comments.Add(entity);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Article), new {id = model.ArticleId});
         }
     }
 }

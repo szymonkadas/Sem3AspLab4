@@ -11,3 +11,28 @@
         @Html.Raw(Model.Content)
     </div>
 </article>
+<hr/>
+<section>
+    <h2> Comments </h2>
+    @if (Model.Comments.Count == 0)
+    {
+        <p> No comments yet. Be the first to comment! </p>
+    }
+    else
+    {
+        <ul class="list-group">
+            @foreach (var comment in Model.Comments)
+            {
+                <li class="list-group-item">
+                    <strong>@comment.Author</strong> <span class="text-muted">(@comment.PostedAt.ToString("g"))</span>
+                    <p>@comment.Content</p>
+                </li>
+            }
+        </ul>
+    }
+</section>
+<hr/>
+<section>
+    <h1> Add a coment </h1>
+    @await Html.PartialAsync("_AddComment", new lab3.Models.CreateBlogCommentModel {ArticleId = Model.Id})
+</section>
